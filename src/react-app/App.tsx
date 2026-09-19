@@ -22,8 +22,16 @@ function App() {
   return (
     <div className="site">
       <header className="header">
-        <a className="brand" href="#inicio" aria-label="Eddy Diniz Nutricionista">
-          <span className="brandBolt">ϟ</span>
+        <a
+          className="brand"
+          href="#inicio"
+          aria-label="Eddy Diniz Nutricionista"
+        >
+          <img
+            className="brandIcon"
+            src="/1000381592.jpg"
+            alt="Símbolo Eddy Diniz"
+          />
 
           <div className="brandText">
             <strong>EDDY DINIZ</strong>
@@ -72,8 +80,15 @@ function App() {
             </div>
           </div>
 
-          <div className="heroBrand" aria-label="Identidade Eddy Diniz">
-            <div className="boltLarge">ϟ</div>
+          <div className="heroBrand">
+            <div className="heroIconContainer">
+              <img
+                className="heroLogoIcon"
+                src="/1000381592.jpg"
+                alt=""
+                aria-hidden="true"
+              />
+            </div>
 
             <strong>EDDY DINIZ</strong>
             <span>NUTRICIONISTA</span>
@@ -90,15 +105,18 @@ function App() {
 
         <section className="trustBar">
           <span>
-            <i /> CRN-11 24210
+            <i />
+            CRN-11 24210
           </span>
 
           <span>
-            <i /> Atendimento individual
+            <i />
+            Atendimento individual
           </span>
 
           <span>
-            <i /> Presencial e online
+            <i />
+            Presencial e online
           </span>
         </section>
 
@@ -171,7 +189,14 @@ function App() {
         </section>
 
         <section className="manifesto">
-          <span className="manifestoBolt">ϟ</span>
+          <div className="manifestoIconContainer">
+            <img
+              className="manifestoLogoIcon"
+              src="/1000381592.jpg"
+              alt=""
+              aria-hidden="true"
+            />
+          </div>
 
           <p>
             NUTRIÇÃO É CIÊNCIA,
@@ -202,7 +227,9 @@ function App() {
           </div>
 
           <div className="bookingCard">
-            <span className="bookingLabel">HORÁRIOS DE ATENDIMENTO</span>
+            <span className="bookingLabel">
+              HORÁRIOS DE ATENDIMENTO
+            </span>
 
             <h3>Agendamento online</h3>
 
@@ -229,7 +256,14 @@ function App() {
 
       <footer id="contato">
         <div className="footerBrand">
-          <span className="footerBolt">ϟ</span>
+          <div className="footerIconContainer">
+            <img
+              className="footerLogoIcon"
+              src="/1000381592.jpg"
+              alt=""
+              aria-hidden="true"
+            />
+          </div>
 
           <div>
             <strong>EDDY DINIZ</strong>
