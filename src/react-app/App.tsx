@@ -48,10 +48,7 @@ function SparkleIcon() {
 function BrandLogo({ light = false }: { light?: boolean }) {
   return (
     <div className={`brand-logo ${light ? "brand-logo--light" : ""}`}>
-      <img
-        src="/1000381592.jpg"
-        alt="Eddy Diniz Nutricionista"
-      />
+      <img src="/logo.jpg" alt="Eddy Diniz Nutricionista" />
     </div>
   );
 }
@@ -215,7 +212,10 @@ function App() {
             ser mais leve.
           </h2>
 
-          <a className="button button--primary cta-button" href={agendamentoLink}>
+          <a
+            className="button button--primary cta-button"
+            href={agendamentoLink}
+          >
             <span>Agendar</span>
             <ArrowIcon />
           </a>
@@ -301,9 +301,11 @@ function App() {
 
           <address>
             <a href="tel:+5583994210431">(83) 99421-0431</a>
+
             <a href="mailto:eddydiniz69@gmail.com">
               eddydiniz69@gmail.com
             </a>
+
             <span>CRN-11 24210</span>
           </address>
         </div>
