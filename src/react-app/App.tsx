@@ -1,14 +1,6 @@
 import { type FormEvent, useMemo, useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  getListAppointmentAvailabilityQueryKey,
-  useCreateAppointment,
-  useListAppointmentAvailability,
-} from "@workspace/api-client-react";
-import type { Appointment } from "@workspace/api-client-react";
 import "./App.css";
 
-const queryClient = new QueryClient();
 const agendamentoLink = "/?pagina=agendar";
 
 type ConsultationMode = "presencial" | "online";
@@ -16,6 +8,15 @@ type BookingForm = {
   name: string;
   phone: string;
   email: string;
+};
+
+type Appointment = {
+  name: string;
+  phone: string;
+  email: string;
+  mode: ConsultationMode;
+  scheduledDate: string;
+  scheduledTime: string;
 };
 
 function ArrowIcon() {
@@ -82,7 +83,11 @@ function Home() {
           <span>CRN-11 24210</span>
         </div>
 
-        <a className="menu-button" href="#rodape" aria-label="Abrir menu">
+        <a
+          className="menu-button"
+          href="#rodape"
+          aria-label="Abrir menu"
+        >
           <span />
           <span />
           <span />
@@ -343,14 +348,6 @@ function Home() {
   );
 }
 
-function getErrorStatus(error: unknown) {
-  return typeof error === "object" &&
-    error !== null &&
-    "status" in error
-    ? Number((error as { status?: number }).status)
-    : undefined;
-}
-
 function formatDateForDisplay(value: string) {
   const date = new Date(`${value}T12:00:00`);
 
@@ -410,12 +407,9 @@ function Booking() {
     useState<Partial<BookingForm>>({});
 
   const [confirmed, setConfirmed] = useState(false);
-  const [bookingError, setBookingError] = useState("");
 
   const [submittedAppointment, setSubmittedAppointment] =
     useState<Appointment | null>(null);
-
-  const createAppointment = useCreateAppointment();
 
   const dateOptions = useMemo(() => {
     const result: {
@@ -455,29 +449,19 @@ function Booking() {
     return result;
   }, []);
 
-  const availabilityParams = useMemo(
-    () => ({
-      startDate: dateOptions[0]?.value ?? "",
-      days: 6,
-    }),
+  const availability = useMemo(
+    () =>
+      dateOptions.map((option) => ({
+        date: option.value,
+        times: [
+          "08:30",
+          "10:00",
+          "14:00",
+          "15:30",
+          "17:00",
+        ],
+      })),
     [dateOptions],
-  );
-
-  const {
-    data: availability = [],
-    isLoading: availabilityLoading,
-    isError: availabilityError,
-  } = useListAppointmentAvailability(
-    availabilityParams,
-    {
-      query: {
-        enabled: step === 2 && Boolean(mode),
-        queryKey:
-          getListAppointmentAvailabilityQueryKey(
-            availabilityParams,
-          ),
-      },
-    },
   );
 
   const selectedAvailability = availability.find(
@@ -488,7 +472,6 @@ function Booking() {
     setMode(nextMode);
     setDate("");
     setTime("");
-    setBookingError("");
   }
 
   function updateForm(
@@ -532,41 +515,50 @@ function Booking() {
     }
 
     setErrors(nextErrors);
-    setBookingError("");
 
     if (
-      Object.keys(nextErrors).length === 0 &&
-      mode &&
-      date &&
-      time
+      Object.keys(nextErrors).length !== 0 ||
+      !mode ||
+      !date ||
+      !time
     ) {
-      createAppointment.mutate(
-        {
-          data: {
-            name: form.name.trim(),
-            phone: form.phone.trim(),
-            email: form.email.trim(),
-            mode,
-            scheduledDate: date,
-            scheduledTime: time,
-          },
-        },
-        {
-          onSuccess: (appointment) => {
-            setSubmittedAppointment(appointment);
-            setConfirmed(true);
-          },
-
-          onError: (error) => {
-            setBookingError(
-              getErrorStatus(error) === 409
-                ? "Esse horário acabou de ser preenchido. Escolha outra opção."
-                : "Não foi possível registrar sua solicitação. Tente novamente.",
-            );
-          },
-        },
-      );
+      return;
     }
+
+    const appointment: Appointment = {
+      name: form.name.trim(),
+      phone: form.phone.trim(),
+      email: form.email.trim(),
+      mode,
+      scheduledDate: date,
+      scheduledTime: time,
+    };
+
+    const message = [
+      "Olá, Eddy! Gostaria de solicitar uma consulta.",
+      `Nome: ${appointment.name}`,
+      `Telefone: ${appointment.phone}`,
+      `E-mail: ${appointment.email}`,
+      `Formato: ${
+        appointment.mode === "online"
+          ? "Online"
+          : "Presencial"
+      }`,
+      `Data: ${formatDateForDisplay(
+        appointment.scheduledDate,
+      )}`,
+      `Horário: ${appointment.scheduledTime}`,
+    ].join("\n");
+
+    setSubmittedAppointment(appointment);
+    setConfirmed(true);
+
+    window.open(
+      `https://wa.me/5583994210431?text=${encodeURIComponent(
+        message,
+      )}`,
+      "_blank",
+    );
   }
 
   if (confirmed) {
@@ -600,8 +592,8 @@ function Booking() {
           </h1>
 
           <p>
-            Sua solicitação foi registrada. Eddy entrará
-            em contato para confirmar os detalhes.
+            Sua solicitação foi preparada no WhatsApp.
+            Envie a mensagem para confirmar os detalhes.
           </p>
 
           <div className="booking-confirmation-details">
@@ -792,14 +784,7 @@ function Booking() {
                 <div className="booking-times">
                   <h3>Horários disponíveis</h3>
 
-                  {availabilityLoading ? (
-                    <p>Consultando horários...</p>
-                  ) : availabilityError ? (
-                    <p className="booking-error">
-                      Não conseguimos consultar os horários
-                      agora.
-                    </p>
-                  ) : selectedAvailability?.times.length ? (
+                  {selectedAvailability?.times.length ? (
                     <div className="booking-time-grid">
                       {selectedAvailability.times.map(
                         (option) => (
@@ -944,19 +929,10 @@ function Booking() {
                 <button
                   className="button button--primary"
                   type="submit"
-                  disabled={createAppointment.isPending}
                 >
-                  {createAppointment.isPending
-                    ? "Enviando..."
-                    : "Solicitar consulta"}
+                  Solicitar consulta
                 </button>
               </div>
-
-              {bookingError && (
-                <p className="booking-error">
-                  {bookingError}
-                </p>
-              )}
             </form>
           )}
         </section>
@@ -978,11 +954,7 @@ function AppRouter() {
 }
 
 function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AppRouter />
-    </QueryClientProvider>
-  );
+  return <AppRouter />;
 }
 
 export default App;
