@@ -731,9 +731,20 @@ svg {
     padding-top: 90px;
   }
 
+  .hero-title {
+    max-width: 900px;
+    font-size: clamp(64px, 5.8vw, 88px);
+    line-height: 1.04;
+  }
+
+  .hero-description {
+    max-width: 680px;
+  }
+
   .hero-actions {
     flex-direction: row;
     max-width: none;
+    margin-top: 36px;
   }
 
   .institutional-card {
