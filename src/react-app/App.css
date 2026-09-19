@@ -1,12 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;1,500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;1,500&display=swap");
 
 :root {
-  --cream: #F2EBD9;
-  --yellow: #F4B85C;
-  --sage: #8BA564;
-  --olive: #636B37;
-  --dark: #2F331B;
-  --white: #FFFDF8;
+  --cream: #f2ebd9;
+  --yellow: #f4b85c;
+  --sage: #8ba564;
+  --olive: #636b37;
+  --dark: #2f331b;
+  --white: #fffdf8;
+  --text-soft: rgba(47, 51, 27, 0.72);
   --line: rgba(47, 51, 27, 0.16);
 }
 
@@ -21,9 +22,10 @@ html {
 }
 
 body {
+  margin: 0;
   background: var(--cream);
   color: var(--dark);
-  font-family: "DM Sans", sans-serif;
+  font-family: "DM Sans", Arial, sans-serif;
 }
 
 a {
@@ -31,83 +33,93 @@ a {
   text-decoration: none;
 }
 
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
 button {
   font: inherit;
 }
 
 .site {
+  width: 100%;
   min-height: 100vh;
   overflow: hidden;
 }
 
-/* HEADER */
+/* =========================
+   CABEÇALHO
+========================= */
 
 .header {
-  width: 100%;
   min-height: 92px;
   padding: 0 7%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 30px;
+  background: var(--cream);
   border-bottom: 1px solid var(--line);
-  background: rgba(242, 235, 217, 0.96);
-  position: relative;
-  z-index: 10;
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 13px;
+  flex-shrink: 0;
 }
 
-.brandBolt {
-  color: var(--olive);
-  font-size: 36px;
-  font-weight: 700;
-  line-height: 1;
+.brand-symbol {
+  width: 43px;
+  height: 43px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cream);
 }
 
-.brandText {
+.brand-symbol img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+}
+
+.brand-name {
   display: flex;
   flex-direction: column;
 }
 
-.brandText strong {
-  font-size: 18px;
-  letter-spacing: 0.12em;
-  line-height: 1.1;
+.brand-name strong {
+  font-size: 17px;
+  line-height: 1;
+  letter-spacing: 0.13em;
+  font-weight: 700;
 }
 
-.brandText span {
-  margin-top: 5px;
-  font-size: 8px;
+.brand-name span {
+  margin-top: 7px;
+  font-size: 7px;
+  line-height: 1;
   letter-spacing: 0.42em;
   font-weight: 600;
 }
 
 .nav {
   display: flex;
+  align-items: center;
   gap: 34px;
-  font-size: 13px;
 }
 
 .nav a {
+  font-size: 13px;
   position: relative;
 }
 
 .nav a::after {
   content: "";
   position: absolute;
-  height: 1px;
-  width: 0;
   left: 0;
-  bottom: -6px;
+  bottom: -7px;
+  width: 0;
+  height: 1px;
   background: var(--olive);
   transition: width 0.25s ease;
 }
@@ -116,54 +128,60 @@ button {
   width: 100%;
 }
 
-.headerButton {
+.header-cta {
+  min-height: 46px;
+  padding: 0 21px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: var(--dark);
   color: var(--cream);
-  padding: 14px 21px;
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.03em;
   transition: 0.2s ease;
 }
 
-.headerButton:hover {
+.header-cta:hover {
   background: var(--olive);
 }
 
-/* HERO */
+/* =========================
+   HERO
+========================= */
 
 .hero {
   min-height: 650px;
+  padding: 78px 7%;
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
-  padding: 80px 7%;
-  align-items: center;
   gap: 7%;
+  align-items: center;
 }
 
-.heroCopy {
+.hero-content {
   max-width: 720px;
 }
 
-.eyebrow {
+.label {
   display: inline-block;
+  margin-bottom: 24px;
   color: var(--olive);
   font-size: 10px;
+  line-height: 1.3;
   font-weight: 700;
   letter-spacing: 0.24em;
-  margin-bottom: 25px;
 }
 
 .hero h1,
 .section h2 {
-  font-family: "Playfair Display", serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-weight: 500;
+  letter-spacing: -0.045em;
 }
 
 .hero h1 {
-  font-size: clamp(56px, 6vw, 92px);
-  line-height: 0.98;
-  letter-spacing: -0.045em;
+  font-size: clamp(58px, 6vw, 94px);
+  line-height: 0.97;
 }
 
 .hero h1 em,
@@ -172,184 +190,214 @@ button {
   font-weight: 500;
 }
 
-.heroText {
+.hero-description {
   max-width: 580px;
   margin-top: 30px;
+  color: var(--text-soft);
   font-size: 17px;
   line-height: 1.75;
-  color: rgba(47, 51, 27, 0.78);
 }
 
-.heroActions {
+.hero-buttons {
   margin-top: 38px;
   display: flex;
-  align-items: center;
   gap: 14px;
   flex-wrap: wrap;
 }
 
-.primaryButton,
-.secondaryButton {
+.button-primary,
+.button-outline {
   min-height: 52px;
   padding: 0 24px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 14px;
   font-size: 12px;
   font-weight: 600;
+  transition: 0.2s ease;
 }
 
-.primaryButton {
-  gap: 14px;
-  color: var(--cream);
+.button-primary {
   background: var(--dark);
+  color: var(--cream);
 }
 
-.primaryButton:hover {
+.button-primary:hover {
   background: var(--olive);
 }
 
-.secondaryButton {
-  border: 1px solid rgba(47, 51, 27, 0.35);
+.button-outline {
+  border: 1px solid rgba(47, 51, 27, 0.34);
 }
 
-.secondaryButton:hover {
-  border-color: var(--olive);
+.button-outline:hover {
   color: var(--olive);
+  border-color: var(--olive);
 }
 
-/* BLOCO DA MARCA */
+/* =========================
+   PAINEL DA MARCA
+========================= */
 
-.heroBrand {
-  aspect-ratio: 0.9;
-  max-width: 450px;
+.hero-identity {
   width: 100%;
+  max-width: 445px;
+  min-height: 500px;
   margin-left: auto;
+  padding: 50px 45px;
+  position: relative;
   background: var(--olive);
   color: var(--cream);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 50px;
-  position: relative;
 }
 
-.heroBrand::before {
-  content: "";
+.yellow-detail {
+  width: 90px;
+  height: 90px;
   position: absolute;
-  width: 95px;
-  height: 95px;
+  top: -22px;
+  right: -22px;
   background: var(--yellow);
-  top: -24px;
-  right: -24px;
   z-index: -1;
 }
 
-.boltLarge {
-  font-size: 80px;
+.hero-symbol {
+  width: 130px;
+  height: 105px;
+  margin-bottom: 25px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cream);
+}
+
+.hero-symbol img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+}
+
+.hero-wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-wordmark strong {
+  font-size: clamp(27px, 3vw, 39px);
   line-height: 1;
-  margin-bottom: 20px;
+  letter-spacing: 0.12em;
 }
 
-.heroBrand > strong {
-  font-size: clamp(27px, 3vw, 40px);
-  letter-spacing: 0.13em;
-}
-
-.heroBrand > span {
-  font-size: 10px;
+.hero-wordmark span {
+  margin-top: 11px;
+  font-size: 9px;
   letter-spacing: 0.48em;
-  margin-top: 10px;
 }
 
-.brandDivider {
+.hero-line {
   width: 45px;
   height: 1px;
-  background: var(--cream);
-  opacity: 0.6;
-  margin: 35px 0;
+  margin: 34px 0;
+  background: rgba(242, 235, 217, 0.6);
 }
 
-.heroBrand p {
-  font-family: "Playfair Display", serif;
+.hero-identity > p {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 19px;
   font-style: italic;
-  font-size: 18px;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
-/* CREDENCIAIS */
+/* =========================
+   CREDENCIAIS
+========================= */
 
-.trustBar {
+.credentials {
   min-height: 78px;
-  padding: 0 7%;
+  padding: 20px 7%;
   background: var(--dark);
   color: var(--cream);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   gap: 70px;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
-.trustBar span {
+.credentials span {
   display: flex;
   align-items: center;
   gap: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-.trustBar i {
+.credentials i {
   width: 6px;
   height: 6px;
+  flex: 0 0 6px;
   border-radius: 50%;
   background: var(--yellow);
 }
 
-/* SEÇÕES */
+/* =========================
+   SEÇÕES
+========================= */
 
 .section {
   padding: 110px 7%;
 }
 
 .section h2 {
-  font-size: clamp(44px, 5vw, 68px);
-  line-height: 1.05;
-  letter-spacing: -0.035em;
+  font-size: clamp(44px, 5vw, 69px);
+  line-height: 1.04;
 }
 
-/* SOBRE */
+/* =========================
+   SOBRE
+========================= */
 
 .about {
+  background: var(--white);
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
   gap: 12%;
-  background: var(--white);
 }
 
-.aboutContent {
+.about-content {
   max-width: 630px;
 }
 
-.aboutLead {
-  font-family: "Playfair Display", serif;
-  font-size: 28px !important;
-  line-height: 1.4 !important;
-  color: var(--olive) !important;
-  margin-bottom: 34px !important;
+.about-content blockquote {
+  margin-bottom: 34px;
+  color: var(--olive);
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 28px;
+  line-height: 1.4;
 }
 
-.aboutContent > p {
+.about-content > p {
+  margin-bottom: 18px;
+  color: var(--text-soft);
   font-size: 15px;
   line-height: 1.85;
-  margin-bottom: 18px;
-  color: rgba(47, 51, 27, 0.78);
+}
+
+.about-content > p strong {
+  color: var(--dark);
 }
 
 .signature {
-  margin-top: 36px;
+  margin-top: 38px;
   padding-top: 22px;
   border-top: 1px solid var(--line);
   display: flex;
@@ -357,40 +405,44 @@ button {
 }
 
 .signature strong {
-  font-family: "Playfair Display", serif;
-  font-style: italic;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 24px;
+  font-style: italic;
+  font-weight: 500;
 }
 
 .signature span {
-  margin-top: 5px;
+  margin-top: 7px;
   font-size: 9px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-/* SERVIÇOS */
+/* =========================
+   SERVIÇOS
+========================= */
 
 .services {
   display: grid;
   grid-template-columns: 0.8fr 1.2fr;
   gap: 10%;
+  background: var(--cream);
 }
 
-.servicesHeader > p {
+.services-intro > p {
   max-width: 430px;
-  margin-top: 27px;
-  line-height: 1.8;
+  margin-top: 28px;
+  color: var(--text-soft);
   font-size: 14px;
-  color: rgba(47, 51, 27, 0.7);
+  line-height: 1.8;
 }
 
-.serviceList {
+.services-list {
   border-top: 1px solid var(--line);
 }
 
-.serviceItem {
-  min-height: 150px;
+.service {
+  min-height: 155px;
   display: grid;
   grid-template-columns: 55px 1fr 30px;
   align-items: center;
@@ -399,170 +451,193 @@ button {
   transition: padding 0.25s ease;
 }
 
-.serviceItem:hover {
+.service:hover {
   padding-left: 10px;
 }
 
-.serviceNumber {
+.service-number {
   color: var(--sage);
   font-size: 11px;
   font-weight: 700;
 }
 
-.serviceItem h3 {
-  font-family: "Playfair Display", serif;
+.service h3 {
+  margin-bottom: 8px;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 27px;
   font-weight: 500;
-  margin-bottom: 8px;
 }
 
-.serviceItem p {
+.service p {
   max-width: 520px;
+  color: var(--text-soft);
   font-size: 13px;
   line-height: 1.65;
-  color: rgba(47, 51, 27, 0.66);
 }
 
-.serviceArrow {
-  font-size: 20px;
+.service-arrow {
   color: var(--olive);
+  font-size: 20px;
 }
 
-/* MANIFESTO */
+/* =========================
+   FRASE DA MARCA
+========================= */
 
-.manifesto {
-  min-height: 360px;
+.brand-statement {
+  min-height: 350px;
   padding: 70px 7%;
   background: var(--olive);
   color: var(--cream);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 60px;
+  gap: 65px;
 }
 
-.manifestoBolt {
-  font-size: 100px;
-  color: var(--yellow);
+.statement-symbol {
+  width: 130px;
+  height: 110px;
+  flex: 0 0 130px;
+  overflow: hidden;
+  background: var(--cream);
 }
 
-.manifesto p {
-  font-family: "Playfair Display", serif;
-  font-size: clamp(35px, 5vw, 65px);
+.statement-symbol img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+}
+
+.brand-statement p {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(36px, 5vw, 64px);
   line-height: 1.08;
 }
 
-.manifesto strong {
+.brand-statement strong {
   color: var(--yellow);
   font-weight: 500;
 }
 
-/* AGENDAMENTO */
+/* =========================
+   AGENDAMENTO
+========================= */
 
 .booking {
+  background: var(--cream);
   display: grid;
   grid-template-columns: 1fr 0.85fr;
   gap: 10%;
-  background: var(--cream);
 }
 
-.bookingIntro > p {
+.booking-intro > p {
   max-width: 500px;
-  margin-top: 27px;
+  margin-top: 28px;
+  color: var(--text-soft);
   font-size: 15px;
   line-height: 1.8;
-  color: rgba(47, 51, 27, 0.72);
 }
 
-.crn {
-  margin-top: 55px;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+.booking-professional {
+  margin-top: 52px;
   display: flex;
   flex-direction: column;
 }
 
-.crn span {
+.booking-professional strong {
+  font-size: 14px;
+  letter-spacing: 0.13em;
+}
+
+.booking-professional span {
   margin-top: 7px;
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
-.bookingCard {
+.booking-card {
+  padding: 50px;
   background: var(--dark);
   color: var(--cream);
-  padding: 50px;
 }
 
-.bookingLabel {
+.booking-label {
   color: var(--yellow);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.23em;
 }
 
-.bookingCard h3 {
-  font-family: "Playfair Display", serif;
-  font-size: 35px;
-  font-weight: 500;
+.booking-card h3 {
   margin-top: 20px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 36px;
+  font-weight: 500;
 }
 
-.bookingCard > p {
+.booking-card > p {
   margin-top: 12px;
   font-size: 13px;
+  line-height: 1.6;
   opacity: 0.72;
 }
 
 .times {
+  margin: 32px 0;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 9px;
-  margin: 32px 0;
 }
 
 .times button {
-  height: 47px;
-  border: 1px solid rgba(242, 235, 217, 0.28);
+  min-height: 48px;
+  border: 1px solid rgba(242, 235, 217, 0.27);
   background: transparent;
   color: var(--cream);
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.times button:hover {
+.times button:hover,
+.times button:focus {
   background: var(--cream);
   color: var(--dark);
+  outline: none;
 }
 
-.bookingButton {
+.booking-button {
   width: 100%;
-  min-height: 55px;
+  min-height: 56px;
   border: 0;
   background: var(--yellow);
   color: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
   font-weight: 700;
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
+  transition: 0.2s ease;
 }
 
-.bookingButton:hover {
+.booking-button:hover {
   background: var(--cream);
 }
 
-.bookingCard small {
+.booking-card small {
   display: block;
-  text-align: center;
   margin-top: 17px;
+  text-align: center;
   font-size: 9px;
+  line-height: 1.5;
   opacity: 0.52;
 }
 
-/* FOOTER */
+/* =========================
+   RODAPÉ
+========================= */
 
 footer {
   min-height: 170px;
@@ -571,167 +646,185 @@ footer {
   color: var(--cream);
   border-top: 1px solid rgba(242, 235, 217, 0.12);
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 30px;
 }
 
-.footerBrand {
+.footer-brand {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 14px;
 }
 
-.footerBolt {
-  color: var(--yellow);
-  font-size: 38px;
+.footer-symbol {
+  width: 46px;
+  height: 46px;
+  overflow: hidden;
+  background: var(--cream);
 }
 
-.footerBrand div {
+.footer-symbol img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+}
+
+.footer-brand > div:last-child {
   display: flex;
   flex-direction: column;
 }
 
-.footerBrand strong {
+.footer-brand strong {
+  font-size: 16px;
   letter-spacing: 0.13em;
 }
 
-.footerBrand div span {
-  margin-top: 5px;
-  font-size: 8px;
+.footer-brand span {
+  margin-top: 6px;
+  font-size: 7px;
   letter-spacing: 0.4em;
 }
 
-.footerInfo {
+.footer-details {
   display: flex;
   flex-direction: column;
-  text-align: right;
   gap: 8px;
+  text-align: right;
   font-size: 10px;
-  opacity: 0.65;
+  opacity: 0.66;
 }
 
-/* RESPONSIVO */
+/* =========================
+   RESPONSIVIDADE
+========================= */
 
-@media (max-width: 900px) {
-  .header {
-    padding: 20px 6%;
-  }
-
+@media (max-width: 1000px) {
   .nav {
     display: none;
   }
 
-  .headerButton {
-    padding: 12px 14px;
-  }
-
   .hero {
     grid-template-columns: 1fr;
-    padding: 65px 6% 80px;
+    gap: 65px;
   }
 
-  .heroBrand {
-    margin: 40px auto 0;
-    max-width: 400px;
-  }
-
-  .trustBar {
-    gap: 25px;
-    flex-wrap: wrap;
-    padding: 25px 6%;
-  }
-
-  .section {
-    padding: 80px 6%;
+  .hero-identity {
+    margin: 0 auto;
   }
 
   .about,
   .services,
   .booking {
     grid-template-columns: 1fr;
-    gap: 55px;
-  }
-
-  .manifesto {
-    flex-direction: column;
-    gap: 25px;
-    text-align: center;
+    gap: 60px;
   }
 }
 
-@media (max-width: 600px) {
-  .brandText strong {
-    font-size: 14px;
+@media (max-width: 700px) {
+  .header {
+    min-height: 80px;
+    padding: 15px 5%;
   }
 
-  .brandText span {
+  .brand-symbol {
+    width: 34px;
+    height: 34px;
+  }
+
+  .brand-name strong {
+    font-size: 13px;
+  }
+
+  .brand-name span {
     font-size: 6px;
   }
 
-  .brandBolt {
-    font-size: 29px;
-  }
-
-  .headerButton {
+  .header-cta {
+    min-height: 42px;
+    padding: 0 13px;
     font-size: 10px;
   }
 
   .hero {
     min-height: auto;
+    padding: 65px 6% 75px;
   }
 
   .hero h1 {
     font-size: 52px;
   }
 
-  .heroText {
+  .hero-description {
     font-size: 15px;
   }
 
-  .heroActions {
-    align-items: stretch;
+  .hero-buttons {
     flex-direction: column;
   }
 
-  .primaryButton,
-  .secondaryButton {
+  .button-primary,
+  .button-outline {
     width: 100%;
   }
 
-  .heroBrand {
+  .hero-identity {
+    min-height: 430px;
     padding: 40px 25px;
   }
 
-  .heroBrand::before {
-    width: 65px;
-    height: 65px;
+  .yellow-detail {
+    width: 60px;
+    height: 60px;
+    top: -12px;
     right: -12px;
   }
 
-  .trustBar {
+  .credentials {
+    padding: 28px 6%;
     align-items: flex-start;
     flex-direction: column;
+    gap: 18px;
+  }
+
+  .section {
+    padding: 80px 6%;
   }
 
   .section h2 {
     font-size: 43px;
   }
 
-  .serviceItem {
-    grid-template-columns: 35px 1fr;
-    padding: 25px 0;
+  .about-content blockquote {
+    font-size: 24px;
   }
 
-  .serviceArrow {
+  .service {
+    min-height: auto;
+    padding: 28px 0;
+    grid-template-columns: 35px 1fr;
+  }
+
+  .service-arrow {
     display: none;
   }
 
-  .manifestoBolt {
-    font-size: 70px;
+  .brand-statement {
+    padding: 70px 6%;
+    flex-direction: column;
+    gap: 35px;
+    text-align: center;
   }
 
-  .bookingCard {
-    padding: 32px 22px;
+  .statement-symbol {
+    width: 100px;
+    height: 85px;
+    flex-basis: 100px;
+  }
+
+  .booking-card {
+    padding: 35px 23px;
   }
 
   .times {
@@ -739,12 +832,38 @@ footer {
   }
 
   footer {
+    padding: 45px 6%;
     align-items: flex-start;
     flex-direction: column;
-    gap: 35px;
   }
 
-  .footerInfo {
+  .footer-details {
     text-align: left;
+  }
+}
+
+@media (max-width: 420px) {
+  .brand-name {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: 46px;
+  }
+
+  .section h2 {
+    font-size: 39px;
+  }
+
+  .hero-wordmark strong {
+    font-size: 25px;
+  }
+
+  .hero-wordmark span {
+    font-size: 7px;
+  }
+
+  .booking-card h3 {
+    font-size: 31px;
   }
 }
