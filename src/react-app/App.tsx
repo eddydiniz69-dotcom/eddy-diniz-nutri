@@ -1,13 +1,24 @@
-import { type FormEvent, useMemo, useState } from "react";
+import {
+  type FormEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import "./App.css";
 
 const agendamentoLink = "/?pagina=agendar";
 
 type ConsultationMode = "presencial" | "online";
+
 type BookingForm = {
   name: string;
   phone: string;
   email: string;
+};
+
+type AvailabilityDay = {
+  date: string;
+  times: string[];
 };
 
 type Appointment = {
@@ -18,6 +29,15 @@ type Appointment = {
   scheduledDate: string;
   scheduledTime: string;
 };
+
+class ApiError extends Error {
+  status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
 
 function ArrowIcon() {
   return (
@@ -62,10 +82,21 @@ function SparkleIcon() {
   );
 }
 
-function BrandLogo({ light = false }: { light?: boolean }) {
+function BrandLogo({
+  light = false,
+}: {
+  light?: boolean;
+}) {
   return (
-    <div className={`brand-logo ${light ? "brand-logo--light" : ""}`}>
-      <img src="/logo.jpg" alt="Eddy Diniz Nutricionista" />
+    <div
+      className={`brand-logo ${
+        light ? "brand-logo--light" : ""
+      }`}
+    >
+      <img
+        src="/logo.jpg"
+        alt="Eddy Diniz Nutricionista"
+      />
     </div>
   );
 }
@@ -74,7 +105,11 @@ function Home() {
   return (
     <div className="site-shell">
       <header className="site-header">
-        <a className="header-brand" href="/" aria-label="Página inicial">
+        <a
+          className="header-brand"
+          href="/"
+          aria-label="Página inicial"
+        >
           <BrandLogo />
         </a>
 
@@ -107,8 +142,9 @@ function Home() {
           </h1>
 
           <p className="hero-description">
-            Cuidado nutricional individualizado para construir uma relação
-            mais leve, possível e consciente com a comida.
+            Cuidado nutricional individualizado para
+            construir uma relação mais leve, possível e
+            consciente com a comida.
           </p>
 
           <div className="hero-actions">
@@ -144,11 +180,16 @@ function Home() {
           <ul className="hero-information">
             <li>CRN-11 24210</li>
             <li>Atendimento individual</li>
-            <li>Atendimento presencial e online</li>
+            <li>
+              Atendimento presencial e online
+            </li>
           </ul>
         </section>
 
-        <section className="approach-section" id="abordagem">
+        <section
+          className="approach-section"
+          id="abordagem"
+        >
           <div className="section-kicker">
             Como funciona a consulta
           </div>
@@ -160,8 +201,9 @@ function Home() {
           </h2>
 
           <p className="section-description">
-            Começamos pela sua história e pela sua rotina. A partir dessa
-            conversa, construímos estratégias simples, personalizadas e
+            Começamos pela sua história e pela sua rotina.
+            A partir dessa conversa, construímos
+            estratégias simples, personalizadas e
             possíveis de manter.
           </p>
 
@@ -179,8 +221,8 @@ function Home() {
                 </h3>
 
                 <p>
-                  Sua história, seus horários e sua relação com a comida
-                  entram na conversa.
+                  Sua história, seus horários e sua relação
+                  com a comida entram na conversa.
                 </p>
               </div>
             </article>
@@ -194,8 +236,8 @@ function Home() {
                 <h3>Prático para a vida real</h3>
 
                 <p>
-                  Estratégias que cabem na sua rotina — sem cardápios
-                  impossíveis de sustentar.
+                  Estratégias que cabem na sua rotina —
+                  sem cardápios impossíveis de sustentar.
                 </p>
               </div>
             </article>
@@ -209,8 +251,8 @@ function Home() {
                 <h3>Evolução sem culpa</h3>
 
                 <p>
-                  Nutrição como cuidado contínuo, com clareza, autonomia e
-                  gentileza.
+                  Nutrição como cuidado contínuo, com
+                  clareza, autonomia e gentileza.
                 </p>
               </div>
             </article>
@@ -218,19 +260,25 @@ function Home() {
         </section>
 
         <section className="quote-section">
-          <div className="quote-mark" aria-hidden="true">
+          <div
+            className="quote-mark"
+            aria-hidden="true"
+          >
             “
           </div>
 
           <blockquote>
-            Não é sobre fazer tudo perfeito. É sobre fazer escolhas que
-            cuidam de você — de verdade.
+            Não é sobre fazer tudo perfeito. É sobre fazer
+            escolhas que cuidam de você — de verdade.
           </blockquote>
 
           <p>Uma conversa pode ser o começo</p>
         </section>
 
-        <section className="cta-section" id="agendar">
+        <section
+          className="cta-section"
+          id="agendar"
+        >
           <h2>
             Seu próximo
             <br />
@@ -260,57 +308,87 @@ function Home() {
           </h2>
 
           <p className="services-description">
-            O acompanhamento se adapta ao que você está vivendo agora — com
-            espaço para perguntas, ajustes e evolução.
+            O acompanhamento se adapta ao que você está
+            vivendo agora — com espaço para perguntas,
+            ajustes e evolução.
           </p>
 
           <div className="services-list">
-            <a className="service-item" href={agendamentoLink}>
+            <a
+              className="service-item"
+              href={agendamentoLink}
+            >
               <div className="service-heading">
-                <span className="service-number">01</span>
+                <span className="service-number">
+                  01
+                </span>
+
                 <h3>Consulta nutricional</h3>
                 <ArrowIcon />
               </div>
 
               <p>
-                Um encontro completo para entender sua rotina e traçar um
-                caminho possível.
+                Um encontro completo para entender sua
+                rotina e traçar um caminho possível.
               </p>
             </a>
 
-            <a className="service-item" href={agendamentoLink}>
+            <a
+              className="service-item"
+              href={agendamentoLink}
+            >
               <div className="service-heading">
-                <span className="service-number">02</span>
-                <h3>Acompanhamento individual</h3>
+                <span className="service-number">
+                  02
+                </span>
+
+                <h3>
+                  Acompanhamento individual
+                </h3>
+
                 <ArrowIcon />
               </div>
 
               <p>
-                Ajustes cuidadosos para que o plano acompanhe a sua vida real.
+                Ajustes cuidadosos para que o plano
+                acompanhe a sua vida real.
               </p>
             </a>
 
-            <a className="service-item" href={agendamentoLink}>
+            <a
+              className="service-item"
+              href={agendamentoLink}
+            >
               <div className="service-heading">
-                <span className="service-number">03</span>
-                <h3>Consulta online ou presencial</h3>
+                <span className="service-number">
+                  03
+                </span>
+
+                <h3>
+                  Consulta online ou presencial
+                </h3>
+
                 <ArrowIcon />
               </div>
 
               <p>
-                Escolha o formato que faz sentido para você, com a mesma
-                atenção.
+                Escolha o formato que faz sentido para
+                você, com a mesma atenção.
               </p>
             </a>
           </div>
         </section>
       </main>
 
-      <footer className="site-footer" id="rodape">
+      <footer
+        className="site-footer"
+        id="rodape"
+      >
         <BrandLogo light />
 
         <p className="footer-message">
-          Nutrição prática, humana e sem extremos para a vida que você leva.
+          Nutrição prática, humana e sem extremos para a
+          vida que você leva.
         </p>
 
         <div className="footer-group">
@@ -319,7 +397,10 @@ function Home() {
           <nav aria-label="Links do rodapé">
             <a href="#abordagem">Sobre</a>
             <a href="#abordagem">Abordagem</a>
-            <a href={agendamentoLink}>Agendar consulta</a>
+
+            <a href={agendamentoLink}>
+              Agendar consulta
+            </a>
           </nav>
         </div>
 
@@ -348,42 +429,59 @@ function Home() {
   );
 }
 
-function formatDateForDisplay(value: string) {
-  const date = new Date(`${value}T12:00:00`);
+function formatDateForDisplay(
+  value: string,
+) {
+  const date = new Date(
+    `${value}T12:00:00`,
+  );
 
   if (Number.isNaN(date.getTime())) {
     return value;
   }
 
-  return new Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  }).format(date);
+  return new Intl.DateTimeFormat(
+    "pt-BR",
+    {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    },
+  ).format(date);
 }
 
-function BookingProgress({ step }: { step: number }) {
+function BookingProgress({
+  step,
+}: {
+  step: number;
+}) {
   return (
     <div
       className="booking-progress"
       aria-label={`Etapa ${step} de 3`}
     >
-      {["Formato", "Horário", "Seus dados"].map(
-        (label, index) => (
-          <div
-            className={`booking-progress-step ${
-              step >= index + 1 ? "active" : ""
-            }`}
-            key={label}
-          >
-            <span>
-              {step > index + 1 ? "✓" : index + 1}
-            </span>
+      {[
+        "Formato",
+        "Horário",
+        "Seus dados",
+      ].map((label, index) => (
+        <div
+          className={`booking-progress-step ${
+            step >= index + 1
+              ? "active"
+              : ""
+          }`}
+          key={label}
+        >
+          <span>
+            {step > index + 1
+              ? "✓"
+              : index + 1}
+          </span>
 
-            <small>{label}</small>
-          </div>
-        ),
-      )}
+          <small>{label}</small>
+        </div>
+      ))}
     </div>
   );
 }
@@ -392,24 +490,57 @@ function Booking() {
   const [step, setStep] = useState(1);
 
   const [mode, setMode] =
-    useState<ConsultationMode | null>(null);
+    useState<ConsultationMode | null>(
+      null,
+    );
 
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
-  const [form, setForm] = useState<BookingForm>({
-    name: "",
-    phone: "",
-    email: "",
-  });
+  const [form, setForm] =
+    useState<BookingForm>({
+      name: "",
+      phone: "",
+      email: "",
+    });
 
   const [errors, setErrors] =
     useState<Partial<BookingForm>>({});
 
-  const [confirmed, setConfirmed] = useState(false);
+  const [confirmed, setConfirmed] =
+    useState(false);
 
-  const [submittedAppointment, setSubmittedAppointment] =
-    useState<Appointment | null>(null);
+  const [
+    bookingError,
+    setBookingError,
+  ] = useState("");
+
+  const [
+    submittedAppointment,
+    setSubmittedAppointment,
+  ] = useState<Appointment | null>(
+    null,
+  );
+
+  const [
+    availability,
+    setAvailability,
+  ] = useState<AvailabilityDay[]>([]);
+
+  const [
+    availabilityLoading,
+    setAvailabilityLoading,
+  ] = useState(false);
+
+  const [
+    availabilityError,
+    setAvailabilityError,
+  ] = useState(false);
+
+  const [
+    isSubmitting,
+    setIsSubmitting,
+  ] = useState(false);
 
   const dateOptions = useMemo(() => {
     const result: {
@@ -419,27 +550,51 @@ function Booking() {
       month: string;
     }[] = [];
 
-    const weekdayFormatter = new Intl.DateTimeFormat(
-      "pt-BR",
-      { weekday: "short" },
-    );
+    const weekdayFormatter =
+      new Intl.DateTimeFormat(
+        "pt-BR",
+        {
+          weekday: "short",
+        },
+      );
 
-    const monthFormatter = new Intl.DateTimeFormat(
-      "pt-BR",
-      { month: "short" },
-    );
+    const monthFormatter =
+      new Intl.DateTimeFormat(
+        "pt-BR",
+        {
+          month: "short",
+        },
+      );
 
-    for (let index = 1; index < 7; index += 1) {
+    for (
+      let index = 1;
+      index < 7;
+      index += 1
+    ) {
       const next = new Date();
 
-      next.setDate(next.getDate() + index);
+      next.setDate(
+        next.getDate() + index,
+      );
+
+      const value = [
+        next.getFullYear(),
+        String(
+          next.getMonth() + 1,
+        ).padStart(2, "0"),
+        String(
+          next.getDate(),
+        ).padStart(2, "0"),
+      ].join("-");
 
       result.push({
-        value: next.toISOString().slice(0, 10),
+        value,
         weekday: weekdayFormatter
           .format(next)
           .replace(".", ""),
-        number: String(next.getDate()).padStart(2, "0"),
+        number: String(
+          next.getDate(),
+        ).padStart(2, "0"),
         month: monthFormatter
           .format(next)
           .replace(".", ""),
@@ -449,29 +604,86 @@ function Booking() {
     return result;
   }, []);
 
-  const availability = useMemo(
-    () =>
-      dateOptions.map((option) => ({
-        date: option.value,
-        times: [
-          "08:30",
-          "10:00",
-          "14:00",
-          "15:30",
-          "17:00",
-        ],
-      })),
-    [dateOptions],
-  );
+  useEffect(() => {
+    const startDate =
+      dateOptions[0]?.value;
 
-  const selectedAvailability = availability.find(
-    (item) => item.date === date,
-  );
+    if (
+      step !== 2 ||
+      !mode ||
+      !startDate
+    ) {
+      return;
+    }
 
-  function chooseMode(nextMode: ConsultationMode) {
+    const controller =
+      new AbortController();
+
+    async function loadAvailability() {
+      setAvailabilityLoading(true);
+      setAvailabilityError(false);
+
+      try {
+        const params =
+          new URLSearchParams({
+            startDate,
+            days: "6",
+          });
+
+        const response = await fetch(
+          `/api/appointments/availability?${params}`,
+          {
+            signal: controller.signal,
+          },
+        );
+
+        if (!response.ok) {
+          throw new ApiError(
+            response.status,
+            "Não foi possível consultar os horários.",
+          );
+        }
+
+        const data =
+          (await response.json()) as AvailabilityDay[];
+
+        setAvailability(data);
+      } catch (error) {
+        if (
+          error instanceof DOMException &&
+          error.name === "AbortError"
+        ) {
+          return;
+        }
+
+        setAvailabilityError(true);
+      } finally {
+        if (
+          !controller.signal.aborted
+        ) {
+          setAvailabilityLoading(false);
+        }
+      }
+    }
+
+    void loadAvailability();
+
+    return () =>
+      controller.abort();
+  }, [step, mode, dateOptions]);
+
+  const selectedAvailability =
+    availability.find(
+      (item) => item.date === date,
+    );
+
+  function chooseMode(
+    nextMode: ConsultationMode,
+  ) {
     setMode(nextMode);
     setDate("");
     setTime("");
+    setBookingError("");
   }
 
   function updateForm(
@@ -489,12 +701,13 @@ function Booking() {
     }));
   }
 
-  function submitBooking(
+  async function submitBooking(
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
 
-    const nextErrors: Partial<BookingForm> = {};
+    const nextErrors:
+      Partial<BookingForm> = {};
 
     if (!form.name.trim()) {
       nextErrors.name =
@@ -515,9 +728,11 @@ function Booking() {
     }
 
     setErrors(nextErrors);
+    setBookingError("");
 
     if (
-      Object.keys(nextErrors).length !== 0 ||
+      Object.keys(nextErrors)
+        .length !== 0 ||
       !mode ||
       !date ||
       !time
@@ -525,53 +740,93 @@ function Booking() {
       return;
     }
 
-    const appointment: Appointment = {
-      name: form.name.trim(),
-      phone: form.phone.trim(),
-      email: form.email.trim(),
-      mode,
-      scheduledDate: date,
-      scheduledTime: time,
-    };
+    setIsSubmitting(true);
 
-    const message = [
-      "Olá, Eddy! Gostaria de solicitar uma consulta.",
-      `Nome: ${appointment.name}`,
-      `Telefone: ${appointment.phone}`,
-      `E-mail: ${appointment.email}`,
-      `Formato: ${
-        appointment.mode === "online"
-          ? "Online"
-          : "Presencial"
-      }`,
-      `Data: ${formatDateForDisplay(
-        appointment.scheduledDate,
-      )}`,
-      `Horário: ${appointment.scheduledTime}`,
-    ].join("\n");
+    try {
+      const response = await fetch(
+        "/api/appointments",
+        {
+          method: "POST",
 
-    setSubmittedAppointment(appointment);
-    setConfirmed(true);
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
 
-    window.open(
-      `https://wa.me/5583994210431?text=${encodeURIComponent(
-        message,
-      )}`,
-      "_blank",
-    );
+          body: JSON.stringify({
+            name: form.name.trim(),
+            phone: form.phone.trim(),
+            email: form.email.trim(),
+            mode,
+            scheduledDate: date,
+            scheduledTime: time,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        let message =
+          "Não foi possível registrar sua solicitação.";
+
+        try {
+          const data =
+            (await response.json()) as {
+              error?: string;
+            };
+
+          if (data.error) {
+            message = data.error;
+          }
+        } catch {
+          // Resposta sem JSON.
+        }
+
+        throw new ApiError(
+          response.status,
+          message,
+        );
+      }
+
+      const appointment =
+        (await response.json()) as Appointment;
+
+      setSubmittedAppointment(
+        appointment,
+      );
+
+      setConfirmed(true);
+    } catch (error) {
+      setBookingError(
+        error instanceof ApiError &&
+          error.status === 409
+          ? "Esse horário acabou de ser preenchido. Volte e escolha outra opção."
+          : error instanceof Error
+            ? error.message
+            : "Não foi possível registrar sua solicitação. Tente novamente.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (confirmed) {
-    const appointment = submittedAppointment;
+    const appointment =
+      submittedAppointment;
 
     return (
       <main className="booking-page">
         <header className="booking-topbar">
-          <a className="booking-logo" href="/">
+          <a
+            className="booking-logo"
+            href="/"
+          >
             <BrandLogo />
           </a>
 
-          <a className="booking-back" href="/">
+          <a
+            className="booking-back"
+            href="/"
+          >
             ← Voltar ao site
           </a>
         </header>
@@ -588,12 +843,17 @@ function Booking() {
           <h1>
             Até breve,
             <br />
-            {(appointment?.name ?? form.name).split(" ")[0]}.
+            {(
+              appointment?.name ??
+              form.name
+            ).split(" ")[0]}
+            .
           </h1>
 
           <p>
-            Sua solicitação foi preparada no WhatsApp.
-            Envie a mensagem para confirmar os detalhes.
+            Sua solicitação foi registrada.
+            Eddy entrará em contato para
+            confirmar os detalhes.
           </p>
 
           <div className="booking-confirmation-details">
@@ -601,7 +861,10 @@ function Booking() {
               <span>Formato</span>
 
               <strong>
-                {(appointment?.mode ?? mode) === "online"
+                {(
+                  appointment?.mode ??
+                  mode
+                ) === "online"
                   ? "Consulta online"
                   : "Consulta presencial"}
               </strong>
@@ -612,7 +875,9 @@ function Booking() {
 
               <strong>
                 {formatDateForDisplay(
-                  appointment?.scheduledDate ?? date,
+                  appointment
+                    ?.scheduledDate ??
+                    date,
                 )}
               </strong>
             </div>
@@ -621,7 +886,9 @@ function Booking() {
               <span>Horário</span>
 
               <strong>
-                {appointment?.scheduledTime ?? time}
+                {appointment
+                  ?.scheduledTime ??
+                  time}
               </strong>
             </div>
 
@@ -629,12 +896,16 @@ function Booking() {
               <span>Contato</span>
 
               <strong>
-                {appointment?.phone ?? form.phone}
+                {appointment?.phone ??
+                  form.phone}
               </strong>
             </div>
           </div>
 
-          <a className="button button--primary" href="/">
+          <a
+            className="button button--primary"
+            href="/"
+          >
             Voltar ao início
           </a>
         </section>
@@ -645,11 +916,17 @@ function Booking() {
   return (
     <main className="booking-page">
       <header className="booking-topbar">
-        <a className="booking-logo" href="/">
+        <a
+          className="booking-logo"
+          href="/"
+        >
           <BrandLogo />
         </a>
 
-        <a className="booking-back" href="/">
+        <a
+          className="booking-back"
+          href="/"
+        >
           ← Voltar
         </a>
       </header>
@@ -667,8 +944,9 @@ function Booking() {
           </h1>
 
           <p>
-            Escolha o formato e o horário que funcionam
-            para você. Leva menos de dois minutos.
+            Escolha o formato e o horário que
+            funcionam para você. Leva menos
+            de dois minutos.
           </p>
 
           <BookingProgress step={step} />
@@ -678,12 +956,13 @@ function Booking() {
           {step === 1 && (
             <div>
               <h2>
-                Como você prefere ser atendido?
+                Como você prefere ser
+                atendido?
               </h2>
 
               <p className="booking-card-intro">
-                A qualidade da escuta é a mesma nos dois
-                formatos.
+                A qualidade da escuta é a
+                mesma nos dois formatos.
               </p>
 
               <div className="booking-choice-grid">
@@ -695,7 +974,9 @@ function Booking() {
                       : ""
                   }`}
                   onClick={() =>
-                    chooseMode("presencial")
+                    chooseMode(
+                      "presencial",
+                    )
                   }
                 >
                   <span className="booking-choice-icon">
@@ -705,8 +986,9 @@ function Booking() {
                   <h3>Presencial</h3>
 
                   <p>
-                    Atendimento em Fortaleza, em um espaço
-                    preparado para você.
+                    Atendimento em Fortaleza,
+                    em um espaço preparado
+                    para você.
                   </p>
                 </button>
 
@@ -728,8 +1010,9 @@ function Booking() {
                   <h3>Online</h3>
 
                   <p>
-                    De onde você estiver, com a mesma
-                    atenção e privacidade.
+                    De onde você estiver, com
+                    a mesma atenção e
+                    privacidade.
                   </p>
                 </button>
               </div>
@@ -741,7 +1024,9 @@ function Booking() {
                   className="button button--primary"
                   type="button"
                   disabled={!mode}
-                  onClick={() => setStep(2)}
+                  onClick={() =>
+                    setStep(2)
+                  }
                 >
                   Escolher horário
                 </button>
@@ -751,40 +1036,69 @@ function Booking() {
 
           {step === 2 && (
             <div>
-              <h2>Qual dia fica melhor?</h2>
+              <h2>
+                Qual dia fica melhor?
+              </h2>
 
               <p className="booking-card-intro">
-                Selecione uma data e depois um dos horários
-                disponíveis.
+                Selecione uma data e depois
+                um dos horários disponíveis.
               </p>
 
               <div className="booking-date-grid">
-                {dateOptions.map((option) => (
-                  <button
-                    type="button"
-                    className={`booking-date ${
-                      date === option.value
-                        ? "selected"
-                        : ""
-                    }`}
-                    onClick={() => {
-                      setDate(option.value);
-                      setTime("");
-                    }}
-                    key={option.value}
-                  >
-                    <span>{option.weekday}</span>
-                    <strong>{option.number}</strong>
-                    <span>{option.month}</span>
-                  </button>
-                ))}
+                {dateOptions.map(
+                  (option) => (
+                    <button
+                      type="button"
+                      className={`booking-date ${
+                        date ===
+                        option.value
+                          ? "selected"
+                          : ""
+                      }`}
+                      onClick={() => {
+                        setDate(
+                          option.value,
+                        );
+
+                        setTime("");
+                        setBookingError("");
+                      }}
+                      key={option.value}
+                    >
+                      <span>
+                        {option.weekday}
+                      </span>
+
+                      <strong>
+                        {option.number}
+                      </strong>
+
+                      <span>
+                        {option.month}
+                      </span>
+                    </button>
+                  ),
+                )}
               </div>
 
               {date && (
                 <div className="booking-times">
-                  <h3>Horários disponíveis</h3>
+                  <h3>
+                    Horários disponíveis
+                  </h3>
 
-                  {selectedAvailability?.times.length ? (
+                  {availabilityLoading ? (
+                    <p>
+                      Consultando horários...
+                    </p>
+                  ) : availabilityError ? (
+                    <p className="booking-error">
+                      Não conseguimos consultar
+                      os horários agora.
+                    </p>
+                  ) : selectedAvailability
+                      ?.times.length ? (
                     <div className="booking-time-grid">
                       {selectedAvailability.times.map(
                         (option) => (
@@ -795,7 +1109,15 @@ function Booking() {
                                 ? "selected"
                                 : ""
                             }`}
-                            onClick={() => setTime(option)}
+                            onClick={() => {
+                              setTime(
+                                option,
+                              );
+
+                              setBookingError(
+                                "",
+                              );
+                            }}
                             key={option}
                           >
                             {option}
@@ -805,7 +1127,8 @@ function Booking() {
                     </div>
                   ) : (
                     <p>
-                      Nenhum horário disponível neste dia.
+                      Nenhum horário disponível
+                      neste dia.
                     </p>
                   )}
                 </div>
@@ -815,7 +1138,9 @@ function Booking() {
                 <button
                   className="button button--secondary"
                   type="button"
-                  onClick={() => setStep(1)}
+                  onClick={() =>
+                    setStep(1)
+                  }
                 >
                   Voltar
                 </button>
@@ -823,8 +1148,12 @@ function Booking() {
                 <button
                   className="button button--primary"
                   type="button"
-                  disabled={!date || !time}
-                  onClick={() => setStep(3)}
+                  disabled={
+                    !date || !time
+                  }
+                  onClick={() =>
+                    setStep(3)
+                  }
                 >
                   Continuar
                 </button>
@@ -833,14 +1162,16 @@ function Booking() {
           )}
 
           {step === 3 && (
-            <form onSubmit={submitBooking}>
+            <form
+              onSubmit={submitBooking}
+            >
               <h2>
                 Como podemos falar com você?
               </h2>
 
               <p className="booking-card-intro">
-                Precisamos destes dados para confirmar sua
-                solicitação.
+                Precisamos destes dados para
+                confirmar sua solicitação.
               </p>
 
               <div className="booking-summary">
@@ -852,7 +1183,10 @@ function Booking() {
                 </span>
 
                 <strong>
-                  {formatDateForDisplay(date)} · {time}
+                  {formatDateForDisplay(
+                    date,
+                  )}{" "}
+                  · {time}
                 </strong>
               </div>
 
@@ -865,14 +1199,17 @@ function Booking() {
                     onChange={(event) =>
                       updateForm(
                         "name",
-                        event.target.value,
+                        event.target
+                          .value,
                       )
                     }
                     placeholder="Seu nome"
                   />
 
                   {errors.name && (
-                    <small>{errors.name}</small>
+                    <small>
+                      {errors.name}
+                    </small>
                   )}
                 </label>
 
@@ -885,14 +1222,17 @@ function Booking() {
                     onChange={(event) =>
                       updateForm(
                         "phone",
-                        event.target.value,
+                        event.target
+                          .value,
                       )
                     }
                     placeholder="(85) 99999-9999"
                   />
 
                   {errors.phone && (
-                    <small>{errors.phone}</small>
+                    <small>
+                      {errors.phone}
+                    </small>
                   )}
                 </label>
 
@@ -905,14 +1245,17 @@ function Booking() {
                     onChange={(event) =>
                       updateForm(
                         "email",
-                        event.target.value,
+                        event.target
+                          .value,
                       )
                     }
                     placeholder="voce@email.com"
                   />
 
                   {errors.email && (
-                    <small>{errors.email}</small>
+                    <small>
+                      {errors.email}
+                    </small>
                   )}
                 </label>
               </div>
@@ -921,7 +1264,9 @@ function Booking() {
                 <button
                   className="button button--secondary"
                   type="button"
-                  onClick={() => setStep(2)}
+                  onClick={() =>
+                    setStep(2)
+                  }
                 >
                   Voltar
                 </button>
@@ -929,16 +1274,26 @@ function Booking() {
                 <button
                   className="button button--primary"
                   type="submit"
+                  disabled={isSubmitting}
                 >
-                  Solicitar consulta
+                  {isSubmitting
+                    ? "Enviando..."
+                    : "Solicitar consulta"}
                 </button>
               </div>
+
+              {bookingError && (
+                <p className="booking-error">
+                  {bookingError}
+                </p>
+              )}
             </form>
           )}
         </section>
 
         <p className="booking-footer-note">
-          Resposta em até 1 dia útil · (83) 99421-0431
+          Resposta em até 1 dia útil ·
+          (83) 99421-0431
         </p>
       </div>
     </main>
@@ -946,11 +1301,14 @@ function Booking() {
 }
 
 function AppRouter() {
-  const pagina = new URLSearchParams(
-    window.location.search,
-  ).get("pagina");
+  const pagina =
+    new URLSearchParams(
+      window.location.search,
+    ).get("pagina");
 
-  return pagina === "agendar" ? <Booking /> : <Home />;
+  return pagina === "agendar"
+    ? <Booking />
+    : <Home />;
 }
 
 function App() {
