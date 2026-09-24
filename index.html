@@ -10,5 +10,24 @@
 	<body>
 		<div id="root"></div>
 		<script type="module" src="/src/react-app/main.tsx"></script>
+		<script>
+			const addSecondaryCrn = () => {
+				document.querySelectorAll('.professional-id').forEach((element) => {
+					if (element.querySelector('[data-crn6]')) return;
+
+					const crn6 = document.createElement('span');
+					crn6.dataset.crn6 = 'true';
+					crn6.textContent = 'CRN6-51657/S';
+					element.appendChild(crn6);
+				});
+			};
+
+			const observer = new MutationObserver(addSecondaryCrn);
+			observer.observe(document.getElementById('root'), {
+				childList: true,
+				subtree: true,
+			});
+			addSecondaryCrn();
+		</script>
 	</body>
 </html>
