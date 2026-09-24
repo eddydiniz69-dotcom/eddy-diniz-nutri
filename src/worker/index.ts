@@ -104,6 +104,22 @@ function addDays(
     .slice(0, 10);
 }
 
+function getPresentialCity(
+  value: string,
+): "Campina Grande" | "Fortaleza" | null {
+  const day = Number(value.slice(8, 10));
+
+  if (day >= 1 && day <= 17) {
+    return "Campina Grande";
+  }
+
+  if (day >= 19 && day <= 31) {
+    return "Fortaleza";
+  }
+
+  return null;
+}
+
 function getTodayInFortaleza(): string {
   const parts =
     new Intl.DateTimeFormat("en", {
@@ -202,10 +218,17 @@ async function sendNewAppointmentEmail(
       appointment.scheduled_date,
     );
 
+  const city =
+    appointment.mode === "presencial"
+      ? getPresentialCity(
+          appointment.scheduled_date,
+        )
+      : null;
+
   const modeLabel =
     appointment.mode === "online"
       ? "Online"
-      : "Presencial";
+      : `Presencial · ${city ?? "cidade a confirmar"}`;
 
   const response = await fetch(
     "https://api.resend.com/emails",
@@ -378,7 +401,7 @@ async function sendNewAppointmentEmail(
                       text-align:right;
                       font-weight:700;
                     ">
-                      ${modeLabel}
+                      ${escapeHtml(modeLabel)}
                     </td>
                   </tr>
 
@@ -691,6 +714,19 @@ app.post(
         {
           error:
             "Escolha uma data e um horário futuros.",
+        },
+        400,
+      );
+    }
+
+    if (
+      mode === "presencial" &&
+      !getPresentialCity(scheduledDate)
+    ) {
+      return c.json(
+        {
+          error:
+            "O dia 18 é reservado para deslocamento. Para atendimento presencial, escolha os dias 1 a 17 em Campina Grande ou do dia 19 ao fim do mês em Fortaleza.",
         },
         400,
       );
