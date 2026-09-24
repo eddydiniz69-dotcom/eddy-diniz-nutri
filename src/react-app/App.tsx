@@ -188,7 +188,8 @@ function Home() {
           <ul className="hero-information">
             <li>CRN-11 24210</li>
             <li>Atendimento individual</li>
-            <li>Atendimento presencial e online</li>
+            <li>Presencial em Campina Grande e Fortaleza</li>
+            <li>Atendimento online durante todo o mês</li>
           </ul>
         </section>
 
@@ -374,8 +375,8 @@ function Home() {
               </div>
 
               <p>
-                Escolha o formato que faz sentido para
-                você, com a mesma atenção.
+                Presencial em Campina Grande e Fortaleza,
+                ou online de onde você estiver.
               </p>
             </a>
           </div>
@@ -442,6 +443,35 @@ function formatDateForDisplay(value: string) {
     month: "long",
     year: "numeric",
   }).format(date);
+}
+
+function getPresentialCity(value: string) {
+  const day = Number(value.slice(8, 10));
+
+  if (day >= 1 && day <= 17) {
+    return "Campina Grande";
+  }
+
+  if (day >= 19 && day <= 31) {
+    return "Fortaleza";
+  }
+
+  return "Deslocamento";
+}
+
+function formatConsultationLabel(
+  mode: ConsultationMode | null,
+  date: string,
+) {
+  if (mode === "online") {
+    return "Consulta online";
+  }
+
+  if (mode === "presencial" && date) {
+    return `Consulta presencial · ${getPresentialCity(date)}`;
+  }
+
+  return "Consulta presencial";
 }
 
 function BookingProgress({
@@ -525,6 +555,7 @@ function Booking() {
       weekday: string;
       number: string;
       month: string;
+      location: string;
     }[] = [];
 
     const weekdayFormatter =
@@ -537,10 +568,19 @@ function Booking() {
         month: "short",
       });
 
-    for (let index = 1; index < 7; index += 1) {
+    let index = 1;
+
+    while (result.length < 6 && index < 40) {
       const next = new Date();
 
       next.setDate(next.getDate() + index);
+      index += 1;
+
+      const day = next.getDate();
+
+      if (mode === "presencial" && day === 18) {
+        continue;
+      }
 
       const value = [
         next.getFullYear(),
@@ -548,7 +588,7 @@ function Booking() {
           2,
           "0",
         ),
-        String(next.getDate()).padStart(2, "0"),
+        String(day).padStart(2, "0"),
       ].join("-");
 
       result.push({
@@ -556,23 +596,36 @@ function Booking() {
         weekday: weekdayFormatter
           .format(next)
           .replace(".", ""),
-        number: String(next.getDate()).padStart(
+        number: String(day).padStart(
           2,
           "0",
         ),
         month: monthFormatter
           .format(next)
           .replace(".", ""),
+        location:
+          mode === "online"
+            ? "Online"
+            : day <= 17
+              ? "Campina"
+              : "Fortaleza",
       });
     }
 
     return result;
-  }, []);
+  }, [mode]);
 
   useEffect(() => {
     const startDate = dateOptions[0]?.value;
+    const endDate =
+      dateOptions[dateOptions.length - 1]?.value;
 
-    if (step !== 2 || !mode || !startDate) {
+    if (
+      step !== 2 ||
+      !mode ||
+      !startDate ||
+      !endDate
+    ) {
       return;
     }
 
@@ -583,9 +636,21 @@ function Booking() {
       setAvailabilityError(false);
 
       try {
+        const start = new Date(
+          `${startDate}T12:00:00`,
+        );
+        const end = new Date(
+          `${endDate}T12:00:00`,
+        );
+        const days =
+          Math.round(
+            (end.getTime() - start.getTime()) /
+              86_400_000,
+          ) + 1;
+
         const params = new URLSearchParams({
           startDate,
-          days: "6",
+          days: String(days),
         });
 
         const response = await fetch(
@@ -638,6 +703,7 @@ function Booking() {
     setMode(nextMode);
     setDate("");
     setTime("");
+    setAvailability([]);
     setBookingError("");
   }
 
@@ -758,6 +824,10 @@ function Booking() {
 
   if (confirmed) {
     const appointment = submittedAppointment;
+    const confirmationMode =
+      appointment?.mode ?? mode;
+    const confirmationDate =
+      appointment?.scheduledDate ?? date;
 
     return (
       <main className="booking-page">
@@ -806,10 +876,10 @@ function Booking() {
               <span>Formato</span>
 
               <strong>
-                {(appointment?.mode ?? mode) ===
-                "online"
-                  ? "Consulta online"
-                  : "Consulta presencial"}
+                {formatConsultationLabel(
+                  confirmationMode,
+                  confirmationDate,
+                )}
               </strong>
             </div>
 
@@ -818,8 +888,7 @@ function Booking() {
 
               <strong>
                 {formatDateForDisplay(
-                  appointment?.scheduledDate ??
-                    date,
+                  confirmationDate,
                 )}
               </strong>
             </div>
@@ -923,8 +992,8 @@ function Booking() {
                   <h3>Presencial</h3>
 
                   <p>
-                    Atendimento em Fortaleza, em um
-                    espaço preparado para você.
+                    Campina Grande do dia 1 ao 17 e
+                    Fortaleza do dia 19 ao fim do mês.
                   </p>
                 </button>
 
@@ -946,8 +1015,8 @@ function Booking() {
                   <h3>Online</h3>
 
                   <p>
-                    De onde você estiver, com a mesma
-                    atenção e privacidade.
+                    De onde você estiver, durante todo
+                    o mês, com a mesma atenção.
                   </p>
                 </button>
               </div>
@@ -972,8 +1041,19 @@ function Booking() {
               <h2>Qual dia fica melhor?</h2>
 
               <p className="booking-card-intro">
-                Selecione uma data e depois um dos
-                horários disponíveis.
+                {mode === "presencial" ? (
+                  <>
+                    Campina Grande: dias 1 a 17. Fortaleza:
+                    dias 19 ao fim do mês. O dia 18 é
+                    reservado para deslocamento.
+                  </>
+                ) : (
+                  <>
+                    Atendimento online disponível durante
+                    todo o mês. Escolha uma data e depois
+                    um horário.
+                  </>
+                )}
               </p>
 
               <div className="booking-date-grid">
@@ -1001,6 +1081,7 @@ function Booking() {
                     </strong>
 
                     <span>{option.month}</span>
+                    <span>{option.location}</span>
                   </button>
                 ))}
               </div>
@@ -1086,10 +1167,10 @@ function Booking() {
 
               <div className="booking-summary">
                 <span>
-                  Consulta{" "}
-                  {mode === "online"
-                    ? "online"
-                    : "presencial"}
+                  {formatConsultationLabel(
+                    mode,
+                    date,
+                  )}
                 </span>
 
                 <strong>
@@ -1736,10 +1817,10 @@ function Admin() {
                         <dt>Formato</dt>
 
                         <dd>
-                          {appointment.mode ===
-                          "online"
-                            ? "Online"
-                            : "Presencial"}
+                          {formatConsultationLabel(
+                            appointment.mode,
+                            appointment.scheduledDate,
+                          )}
                         </dd>
                       </div>
 
